@@ -107,6 +107,7 @@ class Timer:
         return elapsed_time
 
 
+#%% just to figure out how does it work
 if __name__ == '__main__':
     this_timer = Timer(name = 'test timer')
     # this_timer = Timer()

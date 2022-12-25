@@ -414,6 +414,7 @@ def write_row_csv(CSVfile, newRow, mode = 'a'):
     writer.writerow(newRow)
     f.close()
 
+#%% just to figure out how does it work
 if __name__ == '__main__':
     mainDir = os.getcwd()
 

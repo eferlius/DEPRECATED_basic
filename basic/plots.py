@@ -231,7 +231,7 @@ def plts(X = [], Y = [], sharex = False, sharey = False, nrows = 0, ncols = 0, m
     fig.tight_layout()
     return fig, ax
 
-#%%
+#%% just to figure out how does it work
 if __name__ == '__main__':
     start = 0
     stop = 100

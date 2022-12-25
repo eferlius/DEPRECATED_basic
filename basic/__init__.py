@@ -7,10 +7,9 @@ from . import threadWithReturn
 from . import utils
 
 """
-date: 2022-12-20 22:57:52
-note: copying from CFFSistemi_SILURO
+date: 2022-12-26 00:00:55
+note: last upload on github
 """
-
 
 
 

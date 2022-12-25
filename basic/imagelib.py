@@ -646,7 +646,7 @@ def rescaleToMaxPixel(img, maxPixels = 1000):
 #%% 
 """
 date: 2022-12-22 14:42:55
-note: when making order in utils
+note: when putting order in utils
 """
 # def depImgToThreeCol(image):
 #     '''
