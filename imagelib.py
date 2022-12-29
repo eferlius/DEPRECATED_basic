@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import os
 from . import utils
 from tensorflow.keras.utils import img_to_array
-from . import plots as bp
+from . import plots
 
-def plotImage(img, convertBGR2RGB = False, title = None):
+def plotImage(img, convertBGR2RGB = False, title = ''):
     '''
     Shows an image in a matplotlib figure
 
@@ -31,16 +31,11 @@ def plotImage(img, convertBGR2RGB = False, title = None):
     None.
 
     '''
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.grid(True)
     if convertBGR2RGB:
-        ax.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), interpolation = None)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     else:
-        ax.imshow(img, interpolation = None)
-    if title:
-        ax.set_title(title)
-
+        pass
+    fig, ax = plots.pltsImg(img, mainTitle = title)
     return fig, ax
 
 def imagesDictInSubpplots(imagesDict, sharex = True, sharey = True,
@@ -74,18 +69,10 @@ def imagesDictInSubpplots(imagesDict, sharex = True, sharey = True,
     listImagesDictKeys = list(imagesDict.keys())
     listImagesDictValues = list(imagesDict.values())
 
-    fig, ax = bp.createSubPlots(len(imagesDict), sharex, sharey,
-                                nrows, ncols, mainTitle)
-    counter = -1
-    for axes in ax:
-        for this_ax in axes:
-            counter += 1
-            this_ax.grid()
-            this_ax.set_title(listImagesDictKeys[counter])
-            if listImagesDictValues[counter] is not None:
-                this_ax.imshow(listImagesDictValues[counter])
-    plt.tight_layout()
+    fig, ax = plots.pltsImg(listImagesDictValues, listTitles = listImagesDictKeys, sharex = sharex, sharey = sharey,
+    nrows = nrows, ncols = ncols, mainTitle = mainTitle)
 
+    return fig, ax
 
 def cropImageTLBR(img, tl, br, showImage = False, convertBGR2RGB = False):
     '''

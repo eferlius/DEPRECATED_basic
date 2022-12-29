@@ -7,13 +7,6 @@ from . import sound
 from . import timer
 from . import utils
 
-"""
-date: 2022-12-26 00:00:55
-note: last upload on github
-
-uploaded from reaction
-"""
-
 
 
 

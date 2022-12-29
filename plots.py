@@ -15,9 +15,7 @@ def createSubPlots(nOfPlots = 0, sharex = False, sharey = False,
                    nrows = 0, ncols = 0, mainTitle = '', listTitles = [''],
                    listXlabels = [''], listYlabels = ['']):
     '''
-    _summary_
-
-    _extended_summary_
+    Creates a grid of subplots with nOfPlots or nrows and ncols specified
 
     Parameters
     ----------
@@ -92,8 +90,7 @@ def createSubPlots(nOfPlots = 0, sharex = False, sharey = False,
             this_ax.set_ylabel(listYlabels[ac])
             this_ax.grid()
     return fig, ax
-
-        
+       
 def plts(X = [], Y = [], sharex = False, sharey = False, nrows = 0, ncols = 0, mainTitle = '', listTitles = [''], listXlabels = [''], listYlabels = [''], listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
     '''
     Given (X,Y), plots them
@@ -226,10 +223,7 @@ def plts(X = [], Y = [], sharex = False, sharey = False, nrows = 0, ncols = 0, m
                             this_ax.plot(y, **this_plt_kwargs)
     plt.tight_layout()
     return fig, ax
-
-
-
-        
+     
 def pltsImg(imgs, sharex = False, sharey = False, nrows = 0, ncols = 0, mainTitle = '', listTitles = [''], listXlabels = [''], listYlabels = ['']):
     '''
     Given (X,Y), plots them
@@ -321,7 +315,7 @@ def pltsImg(imgs, sharex = False, sharey = False, nrows = 0, ncols = 0, mainTitl
                 continue
 
             this_ax = ax[row, col]
-            this_ax.imshow(imgs[ac])
+            this_ax.imshow(imgs[ac], interpolation = None)
     plt.tight_layout()
     return fig, ax
 
