@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import os
 from . import utils
 from tensorflow.keras.utils import img_to_array
-import basic.plots as bp
+from . import plots as bp
 
 def plotImage(img, convertBGR2RGB = False, title = None):
     '''

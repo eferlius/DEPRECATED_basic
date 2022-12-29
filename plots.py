@@ -8,8 +8,8 @@ Created on Wed Nov 16 15:38:34 2022
 #%% imports
 import numpy as np
 import matplotlib.pyplot as plt
-# from . import utils
-import utils
+from . import utils
+# import utils
 
 def createSubPlots(nOfPlots = 0, sharex = False, sharey = False,
                    nrows = 0, ncols = 0, mainTitle = '', listTitles = [''],
