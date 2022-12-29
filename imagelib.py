@@ -109,6 +109,27 @@ def cropImageTLBR(img, tl, br, showImage = False, convertBGR2RGB = False):
     return img
 
 def cropImageNRegions(img, nrows = 2, ncols = 2, showImage = False):
+    '''
+    Crops image in N parts according to the number of rows and columns and returns a dictionary with:
+    - indexes: r-c with r = row value and c = col value
+    - values: the parts of the image 
+
+    Parameters
+    ----------
+    img : _type_
+        _description_
+    nrows : int, optional
+        _description_, by default 2
+    ncols : int, optional
+        _description_, by default 2
+    showImage : bool, optional
+        _description_, by default False
+
+    Returns
+    -------
+    dictionary
+        _description_
+    '''
     try:
         h, w, _ = img.shape
     except:
@@ -131,7 +152,7 @@ def cropImageNRegions(img, nrows = 2, ncols = 2, showImage = False):
 def getFrameFromVideo(videoCompletePath, frameNum, showImage = False,
                       convertBGR2RGB = False):
     '''
-    from a video, returns the frame 
+    From a video, returns the frame specified in frameNum
     
     Parameters
     ----------
@@ -170,23 +191,24 @@ def getFrameFromVideo(videoCompletePath, frameNum, showImage = False,
 
 def fromCoordsToTLBR(coords_tuple, returnInt = True):
     '''
-    from tuples of coords of the type [(x1,y1,z1), (x2,y2,z2),...]
+    From tuples of coords of the type [(x1,y1,z1), (x2,y2,z2),...]
     to 2 lists:
         - tl: [min[x1,x2,...],min[y1,y2,...],min[z1,z2,...]]
         - br: [max[x1,x2,...],max[y1,y2,...],max[z1,z2,...]]
-    
+    If returnInt is True, the returned values are integers    
+
 
     Parameters
     ----------
-    coords_tuple : TYPE
-        DESCRIPTION.
+    coords_tuple : _type_
+        _description_
+    returnInt : bool, optional
+        _description_, by default True
 
     Returns
     -------
-    tl : TYPE
-        DESCRIPTION.
-    br : TYPE
-        DESCRIPTION.
+    tuple of 2 elements
+        tl and br coordinates
     '''
     tl = []
     br = []
@@ -207,6 +229,27 @@ def fromCoordsToTLBR(coords_tuple, returnInt = True):
     return tl, br
 
 def getCoords_user(img, nPoints = -1, title = ''):
+    '''
+    User can tap nPoints on the image, tl and br coordinates will be obtained from them.
+
+    *advice*: use 3 points: one for tl, one for br and the third one in the middle to confirm
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    img : _type_
+        _description_
+    nPoints : int, optional
+        _description_, by default -1
+    title : str, optional
+        _description_, by default ''
+
+    Returns
+    -------
+    tuple of 2 elements
+        tl and br coordinates
+    '''
     orig_img = img.copy()
     tl = [0,0]
     br = [img.shape[1],img.shape[0]]
@@ -265,6 +308,7 @@ def getImagesDictBasicTransform(img, imgFormat = 'BGR', showImage = False):
     # conversion
     img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    img_hls = cv2.cvtColor(img, cv2.COLOR_RGB2HSL)
     img_lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
 
     # create images dictionary
@@ -272,10 +316,10 @@ def getImagesDictBasicTransform(img, imgFormat = 'BGR', showImage = False):
     imagesDict['RGB'] = img
     for i in range(3):
         imagesDict['RGB ch' + str(i)]=img[:,:,i]
-    imagesDict['HSV'] = img_hsv
     for i in range(3):
         imagesDict['HSV ch' + str(i)]=img_hsv[:,:,i]
-    imagesDict['HSV'] = img_lab
+    for i in range(3):
+        imagesDict['HSL ch' + str(i)]=img_hls[:,:,i]
     for i in range(3):
         imagesDict['LAB ch' + str(i)]=img_lab[:,:,i]
     imagesDict['gray'] = img_gray
@@ -284,7 +328,7 @@ def getImagesDictBasicTransform(img, imgFormat = 'BGR', showImage = False):
     if showImage:
         # call function for image show
         imagesDictInSubpplots(imagesDict, ncols = 4,
-                              mainTitle = 'image inspection on the different channels')
+        mainTitle = 'image inspection on the different channels')
 
     return imagesDict
 
@@ -326,8 +370,7 @@ def filterImage3Channels(img, ch0 = [0, 255], ch1 = [0, 255], ch2 = [0, 255], sh
         imagesDict['orig'] = img
         imagesDict['filt'] = result
         imagesDictInSubpplots(imagesDict, sharex = True, sharey = True,
-                           nrows = 0, ncols = 1,
-                           mainTitle = 'filt with ' + str(ch0) + ' ' + str(ch1) + ' ' + str(ch2))
+        nrows = 0, ncols = 1, mainTitle = 'filt with ' + str(ch0) + ' ' + str(ch1) + ' ' + str(ch2))
     return result
 
 def projection(img, showPlot = False):
@@ -375,6 +418,8 @@ def projection(img, showPlot = False):
 
 def getTLBRprojection(img, discValue = 0, showPlot = False):
     '''
+    Returns tl and br as indexes of first and last values different from 
+    discValue (discarded value) in projection of the image
     
 
     Parameters
@@ -382,7 +427,7 @@ def getTLBRprojection(img, discValue = 0, showPlot = False):
     img : TYPE
         DESCRIPTION.
     discValue : int or float, depending on image, optional
-        discarde value. The default is 0.
+        discarded value. The default is 0.
     showPlot : TYPE, optional
         DESCRIPTION. The default is False.
 
@@ -421,6 +466,32 @@ def getTLBRprojection(img, discValue = 0, showPlot = False):
     return tl, br
 
 def findStartStopValues(array, discValue = 0, maxIntervals = 100):
+    '''
+    Returns two lists: start and stop.
+    - start contains all the indexes where the array passes from discardedValue 
+    to another value
+    - stop contains all the indexes where the array passes from another value
+    to discardedValue
+
+    If they're longer than maxInvtervals, they're reduced deleting both stop and 
+    start of the closest stop to its consecutive start
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    array : _type_
+        _description_
+    discValue : int, optional
+        _description_, by default 0
+    maxIntervals : int, optional
+        _description_, by default 100
+
+    Returns
+    -------
+    _type_
+        _description_
+    '''
     start = []
     stop = []
 
@@ -444,13 +515,12 @@ def findStartStopValues(array, discValue = 0, maxIntervals = 100):
             stop.append(len(array))
         # might give problems
         # todo check this
-
-    start, stop = checkMaxIntervalsStartStop(start, stop, maxIntervals)
+    start, stop = reduceStartStopMinDist(start, stop, maxIntervals)
 
     return start, stop
 
-def checkMaxIntervalsStartStop(start, stop, maxIntervals = 100):
-    assert len(start) == len(stop), f"start and stop should be of the same lenght, got {len(start)} and {len(stop)}"
+def reduceStartStopMinDist(start, stop, maxIntervals = 100):
+    assert len(start) == len(stop), f"start and stop should be of the same length, got {len(start)} and {len(stop)}"
     start = np.array(start)
     stop = np.array(stop)
     while len(start) > maxIntervals:
@@ -459,8 +529,33 @@ def checkMaxIntervalsStartStop(start, stop, maxIntervals = 100):
         stop = np.delete(stop, closestIndexBetweenStartStop)
 
     return start, stop
+
 # todo finish this
 def getTLBRprojectionInside(img, discValue = 0, showPlot = False, maxIntH = 1, maxIntV = 3):
+    '''
+    Given an image, exectues the projection and return a list of tl and br coord
+    according to the discValue
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    img : _type_
+        _description_
+    discValue : int, optional
+        _description_, by default 0
+    showPlot : bool, optional
+        _description_, by default False
+    maxIntH : int, optional
+        _description_, by default 1
+    maxIntV : int, optional
+        _description_, by default 3
+
+    Returns
+    -------
+    _type_
+        _description_
+    '''
     hProj, vProj = projection(img, showPlot)
 
     starth, stoph = findStartStopValues(hProj[:,0], discValue, maxIntervals = maxIntH)
@@ -476,9 +571,7 @@ def getTLBRprojectionInside(img, discValue = 0, showPlot = False, maxIntH = 1, m
 
 def subValues(img, trueValueIni = [255,255,255], trueValueFin = 1, falseValueFin = 0):
     '''
-    Given an image, checks which pixels are meeting the condition of trueValueIni
-    and substitues them with trueValueFin. Where the condition is not verified,
-    falseValueFin is given (if specified) or the original value is kept.
+    Given an image, checks which pixels are meeting the condition of trueValueIni and substitues them with trueValueFin. Where the condition is not verified, falseValueFin is given (if specified) or the original value is kept.
 
     Parameters
     ----------
