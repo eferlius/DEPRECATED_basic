@@ -5,7 +5,8 @@ import threading
 
 def __playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5):
     '''
-    DEPRECATED, USE playFreq() instead that allows to decide if continue code execution while playing sound
+    DEPRECATED, USE playFreq() instead that allows to decide if continue code 
+    execution while playing sound
     
     Plays a sound in the range of frequency from startFreq to endFreq with step
     stepFreq, each one reproduced for duration s.
@@ -44,7 +45,8 @@ def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blo
     Plays a sound in the range of frequency from startFreq to endFreq with step
     stepFreq, each one reproduced for duration s.
 
-    use blockExec = True to pause the code until the sound is played, otherwise code execution will continue while the sound is played
+    use blockExec = True to pause the code until the sound is played, otherwise 
+    code execution will continue while the sound is played
     
     NB: frequency values will be put in the range between 37 and 32767
 
@@ -75,7 +77,8 @@ def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blo
 
 def __playFile(source, duration = -1):
     '''
-    DEPRECATED, USE playFile() instead that allows to decide if continue code execution while playing sound
+    DEPRECATED, USE playFile() instead that allows to decide if continue code 
+    execution while playing sound
     Plays the media in the given path and pauses the execution till 
         - the end of playing if duration is not specified
         - duration [s] if it is specified
@@ -118,7 +121,8 @@ def playFile(source, duration = -1, blockExec = False):
         - the end of playing if duration is not specified
         - duration [s] if it is specified
 
-    use blockExec = True to pause the code until the sound is played, otherwise code execution will continue while the sound is played
+    use blockExec = True to pause the code until the sound is played, otherwise 
+    code execution will continue while the sound is played
     
     Parameters
     ----------
