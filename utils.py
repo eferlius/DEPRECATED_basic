@@ -22,13 +22,19 @@ def is_npArray(input):
 
 def is_listOfList(input):
     '''execution time: around 360 ms, not depending on length of array'''
+    if input == []:
+        return False
     return is_list(input) and all(isinstance(el, list) for el in input)
 
 def is_listOfNpArray(input):
     '''execution time: around 450 ms, not depending on length of array'''
+    if input == []:
+        return False
     return is_list(input) and all(isinstance(el, np.ndarray) for el in input)
 
-def is_list_containing_lists_npArray(input):
+def is_list_containing_lists_or_npArray(input):
+    if input == []:
+        return False
     return is_list(input) and all(isinstance(el, list) or isinstance(el, np.ndarray) for el in input)
 
 def is_npArray_containing_npArray(input):
@@ -41,6 +47,12 @@ def is_emptyList_or_emptyNpArray(input):
         return False
     else:
         return True
+
+def get_length(arrayOrScalar):
+    if np.isscalar(arrayOrScalar):
+        return 0
+    else:
+        return len(arrayOrScalar)
 
 def make_list(input):
     if not isinstance(input, list):
@@ -61,7 +73,7 @@ def make_listOfNpArray(input):
         return input
 
 def make_listOfList_or_listOfNpArray(input):
-    if not (is_listOfList(input) or is_listOfNpArray(input) or is_list_containing_lists_npArray(input)):
+    if not (is_listOfList(input) or is_listOfNpArray(input) or is_list_containing_lists_or_npArray(input)):
         return [input]
     else:
         return input
@@ -195,6 +207,20 @@ def filter_list_depth(listOfPaths, mainPath, listDepth):
 
 def remove_duplicates_from_list(myList):
     return list(dict.fromkeys(myList))
+
+def remove_duplicates_from_list_of_list(myListOfList):
+    newListOfList = []
+    for l in myListOfList:
+        if l not in newListOfList:
+            newListOfList.append(l)
+    return newListOfList
+
+def remove_elements_already_in_list2(list1, list2):
+    newList1 = []
+    for l in list1:
+        if l not in list2:
+            newList1.append(l)
+    return newList1
 
 def merge_lists_OR(listOfLists):
     '''
@@ -427,5 +453,3 @@ if __name__ == '__main__':
 
 
     
-
-

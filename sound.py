@@ -36,7 +36,7 @@ def __playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5):
         endFreq = min(endFreq, 32767)
         startFreq = max(startFreq, 37)
     for freq in range(startFreq, endFreq, stepFreq):
-        winsound.Beep(freq, duration*1000)
+        winsound.Beep(freq, int(duration*1000))
         time.sleep(0.01)
 
 def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blockExec = False):
@@ -167,5 +167,3 @@ if __name__ == '__main__':
         playFile(filePath, duration = 0.7, blockExec = False)
     
     playFile(filePath, duration = -1)
-
-

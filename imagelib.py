@@ -397,9 +397,9 @@ def projection(img, showPlot = False):
 
     if showPlot:
         fig = plt.figure()
-        ax1 = fig.add_subplot(221)
         ax2 = fig.add_subplot(222)
-        ax3 = fig.add_subplot(224)
+        ax1 = fig.add_subplot(221, sharey = ax2)
+        ax3 = fig.add_subplot(224, sharex = ax2)
 
         ax1.plot(hProj,np.arange(0,len(hProj)),'.-')
         ax1.set_ylim(ax1.get_ylim()[::-1])
@@ -556,10 +556,12 @@ def getTLBRprojectionInside(img, discValue = 0, showPlot = False, maxIntH = 1, m
     _type_
         _description_
     '''
+    
+    assert len(img.shape)==2, f"img should be 2 dimensional, got {img.shape}"
     hProj, vProj = projection(img, showPlot)
 
-    starth, stoph = findStartStopValues(hProj[:,0], discValue, maxIntervals = maxIntH)
-    startv, stopv = findStartStopValues(vProj[:,0], discValue, maxIntervals = maxIntV)
+    starth, stoph = findStartStopValues(hProj, discValue, maxIntervals = maxIntH)
+    startv, stopv = findStartStopValues(vProj, discValue, maxIntervals = maxIntV)
     tl_list = []
     br_list = []
     for tly, bry in zip(starth, stoph):
@@ -571,7 +573,9 @@ def getTLBRprojectionInside(img, discValue = 0, showPlot = False, maxIntH = 1, m
 
 def subValues(img, trueValueIni = [255,255,255], trueValueFin = 1, falseValueFin = 0):
     '''
-    Given an image, checks which pixels are meeting the condition of trueValueIni and substitues them with trueValueFin. Where the condition is not verified, falseValueFin is given (if specified) or the original value is kept.
+    Given an image, checks which pixels are meeting the condition of trueValueIni 
+    and substitues them with trueValueFin. Where the condition is not verified, 
+    falseValueFin is given (if specified) or the original value is kept.
 
     Parameters
     ----------
@@ -590,8 +594,8 @@ def subValues(img, trueValueIni = [255,255,255], trueValueFin = 1, falseValueFin
         DESCRIPTION.
 
     '''
-    trueValueIni_len = utils.checkLength(trueValueIni)
-    trueValueFin_len = utils.checkLength(trueValueFin)
+    trueValueIni_len = utils.get_length(trueValueIni)
+    trueValueFin_len = utils.get_length(trueValueFin)
 
     if len(img.shape)==2:
         img = np.expand_dims(img, axis = -1)
@@ -603,7 +607,7 @@ def subValues(img, trueValueIni = [255,255,255], trueValueFin = 1, falseValueFin
         f"elements in axis -1 of img should be of same dimension of \
 trueValueIni, got {img.shape[-1]} and {trueValueIni_len}"
     if falseValueFin is not None:
-        falseValueFin_len = utils.checkLength(falseValueFin)
+        falseValueFin_len = utils.get_length(falseValueFin)
         assert trueValueFin_len == falseValueFin_len, \
         f"trueValueFin and falseValueFin should have same dimension, \
 got {trueValueFin_len} and {falseValueFin_len}"
@@ -644,6 +648,86 @@ def rescale(img, scale_percent = 300):
 
 def rescaleToMaxPixel(img, maxPixels = 1000):
     return rescale(img, int(100*maxPixels/np.max(img.shape[0:2])))
+
+def correctBorder(img, startPointFlag, trueValue, replaceValue, showPlot = False):
+    '''
+    Starting from startPointFlag (top left, bottom left, bottom right or top right), 
+    iteratively searches for pixel with trueValue and substitute them with replaceValue
+
+    Parameters
+    ----------
+    img : TYPE
+        DESCRIPTION.
+    startPointFlag : TYPE
+        DESCRIPTION.
+    trueValue : TYPE
+        DESCRIPTION.
+    replaceValue : TYPE
+        DESCRIPTION.
+    showPlot : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    img : TYPE
+        DESCRIPTION.
+
+    '''
+    assert startPointFlag in ['tl', 'bl', 'br', 'tr'],f"startPoingFlag can only\
+be ['tl', 'bl', 'br', 'tr'], got {startPointFlag}"
+
+    trueValue = utils.make_list(trueValue)
+    replaceValue = utils.make_list(replaceValue)
+
+    origImg = img.copy()
+    try:
+        h, w = img.shape
+    except:
+        h, w, d = img.shape
+    # starting from the top
+    if startPointFlag[0] == 't':
+        y0 = 0
+    # starting from the bottom
+    elif startPointFlag[0] == 'b':
+        y0 = h-1
+    #starting from left
+    if startPointFlag[1] == 'l':
+        x0 = 0
+    # starting from right
+    elif startPointFlag[1] == 'r':
+        x0 = w-1
+
+    if (img[y0,x0]==trueValue).all():
+        allPoints = [[y0,x0]]
+        startPoints = allPoints.copy()
+        while True:
+            newPoints = []
+            startPoints = utils.remove_duplicates_from_list_of_list(startPoints)
+            for y,x in startPoints:
+                for coord in [[y,x+1],[y,x-1],[y+1,x],[y-1,x]]:
+                    try:
+                        if (img[coord[0], coord[1]]==trueValue).all() and coord not in allPoints:
+                            allPoints.append(coord)
+                            newPoints.append(coord)
+                    except:
+                        pass
+            if newPoints != []: # at least one new point was found
+                startPoints = newPoints.copy()
+            else:
+                break
+
+        for y,x in allPoints:
+            img[y,x]=np.array(replaceValue)
+
+    if showPlot:
+        plots.pltsImg([origImg, img], listTitles = ['original', 'after border correction'],\
+                            mainTitle = 'application of border correction')
+
+    return img
+
+
+
+
 
 
 
