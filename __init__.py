@@ -1,5 +1,6 @@
-__all__ = ['imagelib', 'pandas_ext', 'plots', 'sound', 'timer','utils']
+__all__ = ['countdown', 'imagelib', 'pandas_ext', 'plots', 'sound', 'timer','utils']
 
+from . import countdown
 from . import imagelib
 from . import pandas_ext
 from . import plots
