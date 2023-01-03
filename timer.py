@@ -37,7 +37,8 @@ class Timer:
 
     """
 
-    def __init__(self, name="", text="{:0.4f} seconds", string_lap = 'lap  : ', string_elap = 'elap : ', string_stop = 'stop : ', start = True):
+    def __init__(self, name="", text="{:0.4f} seconds", string_lap = 'lap  : ', 
+                 string_elap = 'elap : ', string_stop = 'stop : ', start = True):
         self._start_time = None
         self._lap_time = 0.
         self._name = name
@@ -83,7 +84,7 @@ class Timer:
         return current_lap
 
     def elap(self, elap_name="", printTime = True):
-        """Report the elapsed time wrt to the start time"""
+        """Report the elapsed time wrt to the start time or to the last reset"""
         if self._start_time is None:
             raise TimerError("Timer is not running. Use .start() to start it")
         elapsed_time = time.perf_counter() - self._start_time
@@ -105,6 +106,7 @@ class Timer:
             print(self._string_stop + self._text.format(elapsed_time))
         
         return elapsed_time
+    
 
 
 #%% just to figure out how does it work
