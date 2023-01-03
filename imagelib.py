@@ -7,7 +7,6 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 from . import utils
-from tensorflow.keras.utils import img_to_array
 from . import plots
 
 def plotImage(img, convertBGR2RGB = False, title = ''):
@@ -632,13 +631,6 @@ trueValueIni, got {img.shape[-1]} and {trueValueFin_len}"
         out = np.where(whereSub, trueValueFin, img)
     return out
 
-def resize(img, nrows = 20, ncols = 20):
-    assert len(img.shape) == 2, f"only accepting 2D images (gray scale or binary)"
-    img = cv2.resize(img.astype(float), (ncols, nrows))
-    img = img_to_array(img).astype(np.uint8)
-    img = img.reshape(1, ncols, nrows, 1)
-    return img
-
 def rescale(img, scale_percent = 300):
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
@@ -649,7 +641,7 @@ def rescale(img, scale_percent = 300):
 def rescaleToMaxPixel(img, maxPixels = 1000):
     return rescale(img, int(100*maxPixels/np.max(img.shape[0:2])))
 
-def correctBorder(img, startPointFlag, trueValue, replaceValue, showPlot = False):
+def correctBorderLoop(img, startPointFlag, trueValue, replaceValue, showPlot = False):
     '''
     Starting from startPointFlag (top left, bottom left, bottom right or top right), 
     iteratively searches for pixel with trueValue and substitute them with replaceValue
@@ -703,7 +695,7 @@ be ['tl', 'bl', 'br', 'tr'], got {startPointFlag}"
         while True:
             newPoints = []
             startPoints = utils.remove_duplicates_from_list_of_list(startPoints)
-            for y,x in startPoints:
+            for y, x in startPoints:
                 for coord in [[y,x+1],[y,x-1],[y+1,x],[y-1,x]]:
                     try:
                         if (img[coord[0], coord[1]]==trueValue).all() and coord not in allPoints:
@@ -725,88 +717,19 @@ be ['tl', 'bl', 'br', 'tr'], got {startPointFlag}"
 
     return img
 
-
-
-
-
-
-
-#%% dismissed code
-
-# def fromTwoCornersToTLBR(corner1, corner2):
-#     '''
-#     Given two couples of [x,y] coordinates, finds top left [min x, min y] and
-#     bottom right [max x, max y]
-
-#     Parameters
-#     ----------
-#     corner1 : TYPE
-#         DESCRIPTION.
-#     corner2 : TYPE
-#         DESCRIPTION.
-
-#     Returns
-#     -------
-#     tl : TYPE
-#         DESCRIPTION.
-#     br : TYPE
-#         DESCRIPTION.
-
-#     '''
-#     tl = [0,0]
-#     br = [0,0]
-
-#     tl[0] = int(np.floor(np.minimum(corner1[0], corner2[0])))
-#     tl[1] = int(np.floor(np.minimum(corner1[1], corner2[1])))
-#     br[0] = int(np.ceil(np.maximum(corner1[0], corner2[0])))
-#     br[1] = int(np.ceil(np.maximum(corner1[1], corner2[1])))
-#     return tl, br
-
-
-# def getTLBR_user(img):
-#     '''
-#     Shows image to user and asks him to press on two corners to crop it. 
-#     Afterwards prints a new figure. 
-#     The user can press: 
-#         - in the centre of the figure to confirm the crop
-#         - in one corner to redo the crop
-
-#     Parameters
-#     ----------
-#     img : TYPE
-#         DESCRIPTION.
-
-#     Returns
-#     -------
-#     tl : [top left x, top left y] coordinates int
-#         DESCRIPTION.
-#     br : [bottom right x, bottom right y] coordinates int
-#         DESCRIPTION.
-
-#     '''
-#     orig_img = img.copy()
-#     tl = [0,0]
-#     br = [img.shape[1],img.shape[0]]
-
-#     while True:
-#         fig, ax = plotImage(orig_img, title = 'select two corners')
-#         corner1, corner2 = plt.ginput(n=2, timeout=-1, show_clicks=True)
-#         tl, br = fromTwoCornersToTLBR(corner1, corner2)
-#         img = cropImageTLBR(orig_img, tl, br)
-
-#         imgName = 'Press Enter to confirm'
-#         cv2.imshow(imgName, rescaleToMaxPixel(img, 800))
-#         # if (cv2.waitKey(0) and (0xFF == ord('y') or 0xFF == ord('Y') or 0xFF == ord('\n'))):
-#         key = cv2.waitKey(0)
-#         if key == ord('\r'): # enter key
-#             plt.close(fig)
-#             cv2.destroyWindow(imgName)
-#             break
-#         else:
-#             plt.close(fig)
-#             cv2.destroyWindow(imgName)
-#             continue
-#     return tl, br
+def correctBorderAllCorners(origImg, trueValue, replaceValue, showPlot = False):
+    img = origImg.copy()
+    trueValue = utils.make_list(trueValue)
+    try:
+        h, w = img.shape
+    except:
+        h, w, d = img.shape
+        
+    for startPointFlag, coord in zip(['tl', 'bl', 'br', 'tr'],[[0,0],[h-1,0],[h-1,w-1],[0,w-1]]):
+        if (img[coord[0],coord[1]] == trueValue).all():
+            print('have to correct border')
+            img = correctBorderLoop(img, startPointFlag, trueValue, replaceValue, showPlot)
+    return img
 #%% 
 """
 date: 2022-12-22 14:42:55
