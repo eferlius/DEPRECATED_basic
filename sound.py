@@ -3,10 +3,59 @@ import time
 import vlc
 import threading
 
+MAX_FREQ = 32767
+MIN_FREQ = 32
+
+def __playBeep(freq = 1000, duration = 0.5):
+    '''
+    DEPRECATED, USE playBeep() instead that allows to decide if continue code execution while playing sound
+    
+    Plays a sound at the given frequency for duration s
+
+    Parameters
+    ----------
+    freq : TYPE, optional
+        DESCRIPTION. The default is 1000.
+    duration : float, optional
+        duration in seconds of beep execution. The default is 0.5.
+
+    Returns
+    -------
+    None.
+
+    '''
+    # frequency values must be between 37 and 32767
+    freq = max(min(freq,MAX_FREQ),MIN_FREQ)
+    freq = int(freq)
+    winsound.Beep(freq, int(duration*1000))
+    time.sleep(0.01)
+    
+def playBeep(freq = 1000, duration = 0.5, blockExec = False):
+    '''
+    Plays a sound at the given frequency for duration s
+
+    Parameters
+    ----------
+    freq : TYPE, optional
+        DESCRIPTION. The default is 1000.
+    duration : float, optional
+        duration in seconds of beep execution. The default is 0.5.
+
+    Returns
+    -------
+    None.
+
+    '''
+    if blockExec: # execute the function
+        __playBeep(freq, duration)
+    else: # create a thread and execute the function
+        thread = threading.Thread(target=__playBeep, args = (freq,duration,))
+        thread.start()
+    
+
 def __playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5):
     '''
-    DEPRECATED, USE playFreq() instead that allows to decide if continue code 
-    execution while playing sound
+    DEPRECATED, USE playFreq() instead that allows to decide if continue code execution while playing sound
     
     Plays a sound in the range of frequency from startFreq to endFreq with step
     stepFreq, each one reproduced for duration s.
@@ -30,14 +79,13 @@ def __playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5):
 
     '''
     # frequency values must be between 37 and 32767
-    if startFreq > endFreq:
-        startFreq = min(startFreq, 32767)
-        endFreq = max(endFreq, 37)
-    elif startFreq < endFreq:
-        endFreq = min(endFreq, 32767)
-        startFreq = max(startFreq, 37)
+    startFreq = max(min(startFreq,MAX_FREQ),MIN_FREQ)
+    endFreq = max(min(endFreq,MAX_FREQ),MIN_FREQ)
+    startFreq = int(startFreq)
+    endFreq = int(endFreq)
+    
     for freq in range(startFreq, endFreq, stepFreq):
-        winsound.Beep(freq, int(duration*1000))
+        playBeep(freq, duration, blockExec = True)
         time.sleep(0.01)
 
 def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blockExec = False):
@@ -45,8 +93,7 @@ def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blo
     Plays a sound in the range of frequency from startFreq to endFreq with step
     stepFreq, each one reproduced for duration s.
 
-    use blockExec = True to pause the code until the sound is played, otherwise 
-    code execution will continue while the sound is played
+    use blockExec = True to pause the code until the sound is played, otherwise code execution will continue while the sound is played
     
     NB: frequency values will be put in the range between 37 and 32767
 
@@ -77,8 +124,7 @@ def playFreq(startFreq = 5000, endFreq = 0, stepFreq = -500, duration = 0.5, blo
 
 def __playFile(source, duration = -1):
     '''
-    DEPRECATED, USE playFile() instead that allows to decide if continue code 
-    execution while playing sound
+    DEPRECATED, USE playFile() instead that allows to decide if continue code execution while playing sound
     Plays the media in the given path and pauses the execution till 
         - the end of playing if duration is not specified
         - duration [s] if it is specified
@@ -121,8 +167,7 @@ def playFile(source, duration = -1, blockExec = False):
         - the end of playing if duration is not specified
         - duration [s] if it is specified
 
-    use blockExec = True to pause the code until the sound is played, otherwise 
-    code execution will continue while the sound is played
+    use blockExec = True to pause the code until the sound is played, otherwise code execution will continue while the sound is played
     
     Parameters
     ----------
