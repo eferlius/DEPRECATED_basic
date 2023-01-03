@@ -35,7 +35,8 @@ def is_listOfNpArray(input):
 def is_list_containing_lists_or_npArray(input):
     if input == []:
         return False
-    return is_list(input) and all(isinstance(el, list) or isinstance(el, np.ndarray) for el in input)
+    return is_list(input) and all(isinstance(el, list) or isinstance(el, np.ndarray) 
+                                  for el in input)
 
 def is_npArray_containing_npArray(input):
     return is_npArray(input) and all(isinstance(el, np.ndarray) for el in input)
@@ -73,14 +74,16 @@ def make_listOfNpArray(input):
         return input
 
 def make_listOfList_or_listOfNpArray(input):
-    if not (is_listOfList(input) or is_listOfNpArray(input) or is_list_containing_lists_or_npArray(input)):
+    if not (is_listOfList(input) or is_listOfNpArray(input) or 
+            is_list_containing_lists_or_npArray(input)):
         return [input]
     else:
         return input
 
 def list_files_in_this_dir(directory):
     '''
-    Returns a list containing the complete path to all the files contained in the given directory
+    Returns a list containing the complete path to all the files contained in 
+    the given directory
     '''
     tmp = os.listdir(directory)
     if tmp is None:
@@ -90,9 +93,21 @@ def list_files_in_this_dir(directory):
     files = [item for item in tmp if os.path.isfile(item)]
     return files
 
+def count_files_in_this_dir(directory):
+    return len(list_files_in_this_dir(directory))
+
+def count_files_in_dirs_inside_this_dir(directory):
+    ans = []
+    for d in list_dirs_in_this_dir(directory):
+        dirName = os.path.split(d)[1]
+        n = count_files_in_this_dir(d)
+        ans.append([dirName, n])
+    return ans
+
 def list_files_in_these_dirs(listDirectories):
     '''
-    Returns a list containing the complete path to all the files contained in the given directories
+    Returns a list containing the complete path to all the files contained in 
+    the given directories
     '''
     files = []
     listDirectories = make_list(listDirectories)
@@ -102,7 +117,8 @@ def list_files_in_these_dirs(listDirectories):
 
 def list_dirs_in_this_dir(directory):
     '''
-    Returns a list containing the complete path to all the directories contained in the given directory
+    Returns a list containing the complete path to all the directories contained 
+    in the given directory
     '''
     tmp = os.listdir(directory)
     if tmp is None:
@@ -189,7 +205,8 @@ def filter_list_extension(listOfPaths, listExtension):
 
 def filter_list_depth(listOfPaths, mainPath, listDepth):
     '''
-    Returns a list with all the paths whose depth wrt to mainPath is equal to one of the value in listDepth 
+    Returns a list with all the paths whose depth wrt to mainPath is equal to 
+    one of the value in listDepth 
     If 0, searches only in the specified folder
     If 1, searches only in the folders inside the folder
     If [0,1], searches only in the specified folder and its subfolders
@@ -224,7 +241,8 @@ def remove_elements_already_in_list2(list1, list2):
 
 def merge_lists_OR(listOfLists):
     '''
-    Returns a list with all the elements contained in at least one of the lists without repetition
+    Returns a list with all the elements contained in at least one of the lists 
+    without repetition
     '''
     listOfLists = make_listOfList(listOfLists)
     list_all = []
@@ -285,7 +303,8 @@ def filter_dirs_in_list(dirList, mainDir, listDepth, listPartialName, filterPart
         valid_dirs_depth = dirList
     else:
         valid_dirs_depth = filter_list_depth(dirList, mainDir, listDepth)
-    valid_dirs_partialName = filter_list_partialName(dirList, listPartialName, filterPartNameLogic)
+    valid_dirs_partialName = filter_list_partialName(dirList, listPartialName, 
+                                                     filterPartNameLogic)
     valid_dirs = merge_lists_logic('AND', [valid_dirs_depth, valid_dirs_partialName])
     return valid_dirs
 
@@ -317,7 +336,8 @@ def filter_files_in_list(dirList, listExt, listPartialName, filterPartNameLogic=
     listExt = make_list(listExt)
     listPartialName = make_list(listPartialName)
     valid_files_ext = filter_list_extension(dirList, listExt)
-    valid_files_partialName = filter_list_partialName(dirList, listPartialName, filterPartNameLogic)
+    valid_files_partialName = filter_list_partialName(dirList, listPartialName, 
+                                                      filterPartNameLogic)
     valid_files = merge_lists_logic('AND', [valid_files_ext, valid_files_partialName])
     return valid_files
 
@@ -331,7 +351,9 @@ def print_files_and_dirs(listFilesFound, listDirsFound):
         print(this_dir)
     print('-'*10)
 
-def find_files_and_dirs_in_dir(directory, listDepth = [0], listExt = [''], listPartialName = [''], filterPartNameLogic = 'AND', onlyDirs = False, sortOutput = 1, printOutput = False):
+def find_files_and_dirs_in_dir(directory, listDepth = [0], listExt = [''], 
+    listPartialName = [''], filterPartNameLogic = 'AND', onlyDirs = False, 
+    sortOutput = 1, printOutput = False):
     '''
     Given a directory, returns two lists containing the complete paths to every file and to every directory contained for all the depths specified in listDepth.
     If searching files, the extension can be specified in listExt (use "." as first character).
@@ -438,6 +460,29 @@ def write_row_csv(CSVfile, newRow, mode = 'a'):
     f = open(CSVfile, mode, encoding='UTF8', newline='')
     writer = csv.writer(f)
     writer.writerow(newRow)
+    f.close()
+
+def write_rows_csv(CSVfile, rows, mode = 'a'):
+    '''
+    Writes newRow in the csv file specified in CSVfile
+
+    Parameters
+    ----------
+    CSVfile : string
+        complete path to the csv file.
+    newRow : list
+        row to be added.
+
+    Returns
+    -------
+    None.
+
+    '''
+    # eventually create the csv folder
+    os.makedirs(os.path.split(CSVfile)[0], exist_ok= True)
+    f = open(CSVfile, mode, encoding='UTF8', newline='')
+    writer = csv.writer(f)
+    writer.writerows(rows)
     f.close()
 
 #%% just to figure out how does it work
