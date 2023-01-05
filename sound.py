@@ -8,7 +8,7 @@ MIN_FREQ = 32
 
 def __playBeep(freq = 1000, duration = 0.5):
     '''
-    DEPRECATED, USE playBeep() instead that allows to decide if continue code execution while playing sound
+    DEPRECTED, USE playBeep() instead that allows to decide if continue code execution while playing sound
     
     Plays a sound at the given frequency for duration s
 
@@ -31,21 +31,6 @@ def __playBeep(freq = 1000, duration = 0.5):
     time.sleep(0.01)
     
 def playBeep(freq = 1000, duration = 0.5, blockExec = False):
-    '''
-    Plays a sound at the given frequency for duration s
-
-    Parameters
-    ----------
-    freq : TYPE, optional
-        DESCRIPTION. The default is 1000.
-    duration : float, optional
-        duration in seconds of beep execution. The default is 0.5.
-
-    Returns
-    -------
-    None.
-
-    '''
     if blockExec: # execute the function
         __playBeep(freq, duration)
     else: # create a thread and execute the function
