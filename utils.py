@@ -484,7 +484,42 @@ def write_rows_csv(CSVfile, rows, mode = 'a'):
     writer = csv.writer(f)
     writer.writerows(rows)
     f.close()
+    
+def chose_option_list(listOfOptions):
+    
+    for i, opt in zip(range(len(listOfOptions)), listOfOptions):
+        print('{:02d} - {}'.format(i, opt))
+    print('{:02d} - {}'.format(-1, 'None')) 
+    while True:
+        ans = input('choice: ')
+        try:
+            ans = int(ans)
+            if ans <= len(listOfOptions) and ans >= 0:
+                choice = listOfOptions[ans]
+            elif ans == -1:
+                choice = None
+            print('[{}] was chosen'.format(choice))
+            return choice
+        except:
+            pass
+        print('not valid input')
 
+def chose_TF(question = 'True or False?'):    
+    while True:
+        ans = input('{} [f, n, 0] or [t, y, 1]: '.format(question))
+        try:
+            if ans.lower() in ['t', 'true', 'y', 'yes', '1']:
+                return True
+            elif ans.lower() in ['f', 'false', 'n', 'no', '0']:
+                return False
+            elif ans == '-1':
+                return None
+        except:
+            pass
+        print('not valid input')
+    
+    
+        
 #%% just to figure out how does it work
 if __name__ == '__main__':
     mainDir = os.getcwd()
