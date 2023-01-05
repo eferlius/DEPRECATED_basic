@@ -717,19 +717,22 @@ be ['tl', 'bl', 'br', 'tr'], got {startPointFlag}"
 
     return img
 
-def correctBorderAllCorners(origImg, trueValue, replaceValue, showPlot = False):
-    img = origImg.copy()
+def correctBorderAllCorners(img, trueValue, replaceValue, showPlot = False):
+    origImg = img.copy()
     trueValue = utils.make_list(trueValue)
     try:
         h, w = img.shape
     except:
         h, w, d = img.shape
         
+    borderCorrectedFlag = [] # to tell in which corners a border detection was needed
     for startPointFlag, coord in zip(['tl', 'bl', 'br', 'tr'],[[0,0],[h-1,0],[h-1,w-1],[0,w-1]]):
         if (img[coord[0],coord[1]] == trueValue).all():
-            print('have to correct border')
+            borderCorrectedFlag.append(1)
             img = correctBorderLoop(img, startPointFlag, trueValue, replaceValue, showPlot)
-    return img
+        else:
+            borderCorrectedFlag.append(0)
+    return img, borderCorrectedFlag
 #%% 
 """
 date: 2022-12-22 14:42:55
