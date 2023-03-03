@@ -93,7 +93,8 @@ def createSubPlots(nOfPlots = 0, sharex = False, sharey = False,
        
 def plts(X = [], Y = [], sharex = False, sharey = False, nrows = 0, ncols = 0, 
 mainTitle = '', listTitles = [''], listXlabels = [''], listYlabels = [''], 
-listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
+listLegLabels = [''], listXlim = [''], listYlim = [''], listOfkwargs = [{}], 
+common_kwargs = {'marker': '.'}):
     '''
     Given (X,Y), plots them
     X and Y can be 
@@ -165,6 +166,12 @@ listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
     listLegLabels : list, optional
         list of labels of each plot, ordered in a horizontal list as the plots appear. 
         If no label is associated with a plot, use '' as a placeholder, by default ['']
+    listXlim: list, optional
+        list of xlim for each plot, ordered in a horizontal list as the plots appear. 
+        If no xlim is associated with a plot, use '' as a placeholder, by default ['']
+    listYlim: list, optional
+        list of ylim for each plot, ordered in a horizontal list as the plots appear. 
+        If no ylim is associated with a plot, use '' as a placeholder, by default ['']
     listOfkwargs : list, optional
         list of kwargs of each plot, ordered in a horizontal list as the plots appear. 
         If no kwarg is associated with a plot, use {} as a placeholder,
@@ -190,6 +197,8 @@ listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
 
     listLegLabels = utils.make_list(listLegLabels)
     listOfkwargs = utils.make_list(listOfkwargs)
+    listXlim = utils.make_list(listXlim)
+    listYlim = utils.make_list(listYlim)
 
     fig, ax = createSubPlots(nOfPlots, sharex, sharey, nrows, ncols, mainTitle, 
     listTitles, listXlabels, listYlabels)
@@ -208,6 +217,19 @@ listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
             this_ax = ax[row, col]
             this_X = utils.make_listOfList_or_listOfNpArray(X[ac])
             this_Y = utils.make_listOfList_or_listOfNpArray(Y[ac])
+            
+            # setting x lim for this axis
+            try:
+                this_ax_xlim = listXlim[ac] 
+                this_ax.set_xlim(this_ax_xlim)
+            except: 
+                pass
+            # setting y lim for this axis
+            try:
+                this_ax_ylim = listYlim[ac] 
+                this_ax.set_ylim(this_ax_ylim)
+            except: 
+                pass
 
             tac = -1 #this ax counter
             for x, y in zip (this_X, this_Y):
@@ -236,6 +258,7 @@ listLegLabels = [''], listOfkwargs = [{}], common_kwargs = {'marker': '.'}):
                             this_ax.plot(x, y, **this_plt_kwargs)
                         else:
                             this_ax.plot(y, **this_plt_kwargs)
+            
     plt.tight_layout()
     return fig, ax
      
