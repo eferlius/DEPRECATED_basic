@@ -1,6 +1,8 @@
 import os
 import csv
 import numpy as np
+import datetime
+import time
 import timer
 
 def test_import():
@@ -151,6 +153,9 @@ def is_correct_depth(ofThisPath, wrtToThisPath, depth):
 
 def is_partial_name_inside(partialName, thisString):
     return partialName in thisString
+
+def get_extension(thisString):
+    return os.path.splitext(thisString)[-1]
 
 def is_correct_extension(ext, thisString):
     return thisString.endswith(ext)
@@ -477,38 +482,9 @@ def write_rows_csv(CSVfile, rows, mode = 'a'):
     writer.writerows(rows)
     f.close()
     
-def chose_option_list(listOfOptions):
-    ''' Given a list of options, displays them and asks for the index of the corresponding one'''
-    for i, opt in zip(range(len(listOfOptions)), listOfOptions):
-        print('{:02d} - {}'.format(i, opt))
-    print('{:02d} - {}'.format(-1, 'None')) 
-    while True:
-        ans = input('choice: ')
-        try:
-            ans = int(ans)
-            if ans <= len(listOfOptions) and ans >= 0:
-                choice = listOfOptions[ans]
-            elif ans == -1:
-                choice = None
-            print('[{}] was chosen'.format(choice))
-            return choice
-        except:
-            pass
-        print('not valid input')
-
-def chose_TF(question = 'True or False?'):    
-    while True:
-        ans = input('{} [f, n, 0] or [t, y, 1]: '.format(question))
-        try:
-            if ans.lower() in ['t', 'true', 'y', 'yes', '1']:
-                return True
-            elif ans.lower() in ['f', 'false', 'n', 'no', '0']:
-                return False
-            elif ans == '-1':
-                return None
-        except:
-            pass
-        print('not valid input')
+        
+def this_moment(fmt = '%Y-%m-%d %H-%M-%S'):
+    return datetime.datetime.fromtimestamp(time.time()).strftime(fmt)
     
     
         
