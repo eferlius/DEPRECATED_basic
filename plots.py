@@ -191,7 +191,17 @@ common_kwargs = {'marker': '.'}):
     nOfPlots = len(Y)
 
     if utils.is_emptyList_or_emptyNpArray(X):
-        X = [[]] * nOfPlots
+        
+        if utils.is_list_containing_lists_or_npArray(Y):
+            X = []
+            for y in Y:
+                x_tmp = []
+                if utils.is_list_containing_lists_or_npArray(y):
+                    for i in range(len(y)):
+                        x_tmp.append([])
+                X.append(x_tmp)
+        else:          
+            X = [[]] * nOfPlots
     else:
         X = utils.make_listOfList_or_listOfNpArray(X) 
 
@@ -421,6 +431,13 @@ if __name__ == '__main__':
     mainTitle = 'plts with two x and y on the same - with x and y labels', 
     sharex = True, sharey = True, ncols = 1, listTitles = ['here x + 0 and x + 5', 'here x + 10'], 
     listXlabels=['','x'], listYlabels=['couple of y', 'y alone'])
+    
+    x = np.arange(1,10,0.01) 
+    y1 = np.random.rand(len(x))
+    y2 = np.random.rand(len(x))
+
+    plts([x,[],[x,[]]],[y1,y2,[y1,y2]],sharex = True, mainTitle = 'X with same structure of Y, either empty values or valid')
+    plts([],[y1,y2,[y1,y2]],sharex = True, mainTitle = 'nested Y and X = []')
 
     xm = np.array([[1],[2],[3]])
     ym = np.array([[4],[6],[5]])
@@ -453,6 +470,6 @@ if __name__ == '__main__':
     plt.draw()
     plt.pause(0.001)
     _ = input('press any key to continue')
-    plt.close('all')
+    # plt.close('all')
 
 # %%
