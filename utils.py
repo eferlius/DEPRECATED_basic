@@ -3,7 +3,6 @@ import csv
 import numpy as np
 import datetime
 import time
-import timer
 
 def test_import():
     '''To simply test the import'''
@@ -485,18 +484,7 @@ def write_rows_csv(CSVfile, rows, mode = 'a'):
         
 def this_moment(fmt = '%Y-%m-%d %H-%M-%S'):
     return datetime.datetime.fromtimestamp(time.time()).strftime(fmt)
-    
-    
-        
-#%% just to figure out how does it work
-if __name__ == '__main__':
-    mainDir = os.getcwd()
 
-    timing = timer.Timer()
-
-    files, dirs = find_files_and_dirs_in_dir(mainDir, listDepth = [-1], listExt = ['.py'], listPartialName = '', filterPartNameLogic = 'AND', printOutput = True)
-
-    timing.stop()
 
 
 
