@@ -1,0 +1,8 @@
+config==0.5.1
+gtts==2.3.1
+keyboard==0.13.5
+matplotlib==3.5.1
+numpy==1.22.2
+opencv_python==4.5.5.62
+pandas==1.4.1
+python_vlc==3.0.18121
