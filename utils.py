@@ -484,6 +484,10 @@ def write_rows_csv(CSVfile, rows, mode = 'a'):
         
 def this_moment(fmt = '%Y-%m-%d %H-%M-%S'):
     return datetime.datetime.fromtimestamp(time.time()).strftime(fmt)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e81ac512be0f5069af28b5956a5080ae6087373
 
 
 

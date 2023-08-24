@@ -379,6 +379,16 @@ mainTitle = '', listTitles = [''], listXlabels = [''], listYlabels = ['']):
     return fig, ax
 
 def pltsImgColorPalette(num = 9):
+    '''
+    shows a grid of plot giving the values of the different RGB formats
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    num : int, optional
+        _description_, by default 9
+    '''
     imgs = []
     for r in np.linspace(0,num-1,num):
         r = int(r)
